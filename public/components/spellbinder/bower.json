@@ -1,0 +1,9 @@
+{
+  "name": "spellbinder",
+  "version": "0.0.0",
+  "commit": "546490777801cff795f84f6002cab52982b6008d",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/mattinsler/spellbinder.git"
+  }
+}

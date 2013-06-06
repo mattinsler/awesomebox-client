@@ -1,0 +1,46 @@
+<style>
+#drawer {
+  position: fixed;
+  top: 50px;
+  bottom: 0;
+  left: 0;
+  width: 220px;
+  background: #222;
+}
+#drawer .nav li {
+  list-style: none;
+  padding: 7px 7px 7px 40px;
+  color: #f0f0f0;
+  border-top: 1px solid #212121;
+  border-bottom: 1px solid #0a0c0e;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+#drawer .nav li.heading {
+  margin-top: 20px;
+}
+</style>
+
+<nav id="drawer">
+  <ul class="nav">
+    <li class="heading">
+      <i class="icon-rocket"></i> Shipped Apps
+    </li>
+    
+    <li class="sidebar-labels-container" style="height: auto;">
+      <ul class="sidebar-labels shipped-apps"></ul>
+    </li>
+    
+    <li class="sidebar-labels-heading">
+      Local Apps
+      <span class="new-label-container">
+        <i class="icon-plus tooltip" data-event="click: new_app" title="Create a new App"></i>
+      </span>
+    </li>
+    
+    <li class="sidebar-labels-container" style="height: auto;">
+      <ul class="sidebar-labels local-apps"></ul>
+    </li>
+  </ul>
+</nav>

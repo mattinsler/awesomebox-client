@@ -1,0 +1,8 @@
+{
+  "name": "ejs",
+  "version": "0.8.4",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/visionmedia/ejs"
+  }
+}
