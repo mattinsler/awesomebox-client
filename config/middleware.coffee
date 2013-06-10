@@ -1,6 +1,7 @@
 express = require 'express'
 flash = require 'connect-flash'
 compiler = require 'connect-compiler'
+less_middleware = require 'less-middleware'
 
 module.exports = (http) ->
   http.use express.logger()
@@ -15,5 +16,6 @@ module.exports = (http) ->
     src: 'public'
     dest: 'public_compiled'
   )
+  http.use less_middleware(src: Caboose.root.join('public').path, dest: Caboose.root.join('public_compiled').path)
   http.use express.static(Caboose.root.join('public_compiled').path)
   http.use express.static(Caboose.root.join('public').path)

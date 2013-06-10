@@ -3,11 +3,21 @@ window.__bootstrap__ = <%- JSON.stringify(bootstrap_data) %>;
 </script>
 
 <%
+  var js_dir = Caboose.path.public.join('javascripts');
+
   function is_html(file) {
     return ['html'].indexOf(file.extension) !== -1;
   }
   function is_js(file) {
     return ['js', 'coffee'].indexOf(file.extension) !== -1;
+  }
+  
+  function js_file_list(dir) {
+    return javascript_include.apply(null,
+      js_dir.join(dir).ls_sync({recursive: true}).filter(is_js).map(function(file) {
+        return file.path.slice(js_dir.path.length + 1).replace(/\.[^\.]+$/, '');
+      })
+    )
   }
 %>
 
@@ -19,30 +29,10 @@ window.__bootstrap__ = <%- JSON.stringify(bootstrap_data) %>;
 <% }) %>
 </div>
 
-<%- javascript_include('main') %>
+<%- javascript_include('awesomebox_client', 'main') %>
 
-<%-
-  javascript_include.apply(null,
-    Caboose.path.public.join('javascripts', 'lib').ls_sync({recursive: true}).filter(is_js).map(function(file) { return 'lib/' + file.basename; })
-  )
-%>
-<%-
-  javascript_include.apply(null,
-    Caboose.path.public.join('javascripts', 'models').ls_sync({recursive: true}).filter(is_js).map(function(file) { return 'models/' + file.basename; })
-  )
-%>
-<%-
-  javascript_include.apply(null,
-    Caboose.path.public.join('javascripts', 'collections').ls_sync({recursive: true}).filter(is_js).map(function(file) { return 'collections/' + file.basename; })
-  )
-%>
-<%-
-  javascript_include.apply(null,
-    Caboose.path.public.join('javascripts', 'views').ls_sync({recursive: true}).filter(is_js).map(function(file) { return 'views/' + file.basename; })
-  )
-%>
-<%-
-  javascript_include.apply(null,
-    Caboose.path.public.join('javascripts', 'routers').ls_sync({recursive: true}).filter(is_js).map(function(file) { return 'routers/' + file.basename; })
-  )
-%>
+<%- js_file_list('lib') %>
+<%- js_file_list('models') %>
+<%- js_file_list('collections') %>
+<%- js_file_list('views') %>
+<%- js_file_list('routers') %>

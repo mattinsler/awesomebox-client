@@ -1,0 +1,66 @@
+<div class="app-header clearfix">
+  <div class="meta pull-left">
+    <div class="clearfix">
+    <% if (model.get('is_remote')) { %>
+      <span class="pull-left button-spacing">
+        <i class="glyphicon glyphicon-plane"></i>
+      </span>
+    <% } else { %>
+      <button class="btn pull-left" data-event="click: ship" title="Ship this app!">
+        <i class="glyphicon glyphicon-plane"></i>
+      </button>
+    <% } %>
+      <div class="pull-left" style="margin-left: 10px;">
+        <h3><%= model.get('name') %></h3>
+        <small data-bind="directory"></small>
+      </div>
+    </div>
+    
+  <% if (model.get('is_remote')) { %>
+    <ul class="nav nav-pills" style="margin: 10px 0 0 50px;">
+      <li><a data-target="#status" data-toggle="pill" data-block>Status</a></li>
+      <li><a data-target="#settings" data-toggle="pill" data-block>Settings</a></li>
+      <li><a data-target="#versions" data-toggle="pill" data-block>Versions</a></li>
+    </ul>
+  <% } %>
+  </div>
+  
+  <div class="actions pull-right">
+    <button class="btn btn-small" data-bind="[class:hide] is_running -> value !== true" data-event="click: open_local_site">
+      <i class="icon-external-link"></i>
+    </button>
+    
+    <div class="btn-group">
+      <button class="btn btn-small" data-event="click: start_stop">
+        <i class="icon-play" data-bind="[class:hide] is_running -> value === true"></i>
+        <i class="icon-stop" style="color:#d14;" data-bind="[class:hide] is_running -> value !== true"></i>
+      </button>
+      <button class="btn btn-small" data-event="click: open_folder">
+        <i class="icon-folder-open"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="tab-content">
+  <div class="tab-pane active" id="docs">
+    <h4>Getting Started</h4>
+    <div class="content">
+      Heloo world<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+      Yo man<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+      I know you
+    </div>
+  </div>
+  
+<% if (model.get('is_remote') && App.get('online')) { %>
+  <div class="tab-pane" id="status">
+    <h4>Status</h4>
+  </div>
+
+  <div class="tab-pane" id="settings">
+    <h4>Settings</h4>
+  </div>
+
+  <div class="tab-pane" id="versions"></div>
+<% } %>
+</div>

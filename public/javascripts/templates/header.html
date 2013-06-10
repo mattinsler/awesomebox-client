@@ -1,17 +1,13 @@
-<style>
-header.navbar {background-color:#428bca;}
-header.navbar .navbar-brand {color:#fff;}
-</style>
-
 <header class="navbar navbar-fixed-top">
   <span class="navbar-brand">awesomebox</span>
   
   <div class="nav navbar-nav pull-right">
   <% if (App.has('user')) { %>
     <% user = App.get('user') %>
+    
     <li class="dropdown">
-      <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-        <%= user.get('name') %> <img class="gravatar" src="http://www.gravatar.com/avatar/<%- user.get('gravatar_hash') %>?s=32">
+      <a href="#" class="dropdown-toggle gravatar-container" data-toggle="dropdown">
+        <%= user.name %> <img class="gravatar" src="http://www.gravatar.com/avatar/<%- user.gravatar_hash %>?s=32">
       </a>
       <ul class="dropdown-menu">
         <li><a href="#" data-event="click: account">Account</a></li>
@@ -21,7 +17,7 @@ header.navbar .navbar-brand {color:#fff;}
       </ul>
     </li>
   <% } else { %>
-    <button type="button" class="btn btn-primary navbar-btn">Login</button>
+    <button type="button" class="btn btn-primary navbar-btn" data-event="click: login">Login</button>
   <% } %>
   </div>
 </header>

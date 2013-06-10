@@ -5,7 +5,8 @@
   "dependencies": {
     "ejs": "0.8.4",
     "caboose": "~0.1.63",
-    "connect-compiler": "~0.1.3"
+    "connect-compiler": "~0.1.3",
+    "less-middleware": "~0.1.12"
   },
   "scripts": {
     "start": "./node_modules/.bin/caboose server"

@@ -1,0 +1,4 @@
+<li data-event="click: select" data-bind="[class:active] @App:app -> value === current_view.model ? true : false">
+  <i class="glyphicon glyphicon-play" style="color:teal;" data-bind="[class:hide] is_running -> value !== true"></i>
+  <span><%= model.get('name') %></span>
+</li>

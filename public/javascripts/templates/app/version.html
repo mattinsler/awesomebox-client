@@ -1,0 +1,38 @@
+<li>
+  <div class="row-header clearfix">
+  <% if (model.get('running')) { %>
+    <div class="btn-group pull-left">
+      <button class="btn btn-small" data-event="click: stop">
+        <i class="icon-stop"></i>
+      </button>
+      <button class="btn btn-small" data-event="click: open_remote">
+        <i class="icon-external-link"></i>
+      </button>
+    </div>
+  <% } else { %>
+    <button class="btn btn-small pull-left" data-event="click: start">
+      <i class="icon-play"></i>
+    </button>
+  <% } %>
+
+    <span class="version pull-left"><%= model.get('instance').version_name %></span>
+    <span class="created-at pull-left">
+      Created <%= moment(model.get('instance').created_at).format('MM/DD/YYYY') %>
+    </span>
+    
+  <% if (model.get('running')) { %>
+    <span class="created-at pull-left">
+      Started <span data-bind="@App.clock:every_10_sec, started_at -> moment(started_at).fromNow()"></span>
+    </span>
+  <% } %>
+    
+    <button class="btn btn-small expand-contract pull-right">
+      <i class="glyphicon glyphicon-chevron-down"></i>
+    </button>
+  </div>
+  
+  <div class="row-content">
+    Change List<br/>
+    Thumbnail of index page
+  </div>
+</li>

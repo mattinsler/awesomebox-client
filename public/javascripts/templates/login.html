@@ -1,0 +1,27 @@
+<div class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form style="margin:0;" data-event="submit: on_submit">
+        <div class="modal-header">
+          <h4 class="modal-title">Login</h4>
+        </div>
+        <div class="modal-body">
+          <fieldset style="margin:0 auto;width:300px;">
+            <div class="alert alert-danger" style="display:none;">
+              Email/password is incorrect
+            </div>
+
+            <label>Email</label>
+            <input type="text" name="email" style="width:286px;" autofocus>
+            <label>Password</label>
+            <input type="password" name="password" style="width:286px;">
+          </fieldset>
+        </div>
+        <div class="modal-footer">
+          <input type="button" class="btn btn-default" value="Cancel" data-event="click: cancel">
+          <input type="submit" class="btn btn-primary" value="Login">
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
