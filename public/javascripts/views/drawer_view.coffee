@@ -33,4 +33,4 @@ class App.DrawerView extends Backbone.View
     @update_collections()
   
   new_app: ->
-    
+    new App.NewAppDialog().render().show()

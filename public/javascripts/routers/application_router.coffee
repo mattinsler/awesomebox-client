@@ -5,11 +5,11 @@ class App.ApplicationRouter extends Backbone.Router
     @drawer_view = new App.DrawerView(el: '#drawer').render()
 
   routes:
-    ':id': 'show_app'
+    ':user/:name': 'show_app'
     '*anything': 'index'
   
-  show_app: (id) ->
-    app = App.apps.get(id)
+  show_app: (user, name) ->
+    app = App.apps.get("#{user}/#{name}")
     return unless app?
     
     @app_view?.remove()

@@ -2,8 +2,13 @@ class VersionView extends Backbone.View
   template: @template('app/version')
   initialize: -> Spellbinder.initialize(@, replace: true)
   start: ->
+    App.client.post "/apps/#{@model.get('instance').app}/versions/#{@model.get('instance').version}/start", =>
+      console.log arguments
   stop: ->
+    App.client.post "/apps/#{@model.get('instance').app}/versions/#{@model.get('instance').version}/stop", =>
+      console.log arguments
   open_remote: ->
+    App.raw_client.post('/commands/open', url: 'http://' + _(@model.get('domains')).last())
 
 class App.AppVersionsView extends Backbone.View
   template: @template('app/versions')

@@ -1,3 +1,33 @@
+class Client
+  constructor: (@before_request) ->
+  
+  encode: (v) -> encodeURIComponent(v).replace('.', '%2E')
+  request: (method, path, data, callback) ->
+    if typeof data is 'function'
+      callback = data
+      data = {}
+    
+    path = '/' + _(path.split('/')).compact().map(@encode).join('/')
+    data ?= {}
+    # query = _(data).map((v, k) -> encodeURIComponent(k) + '=' + encodeURIComponent(v)).join('&')
+    
+    config = 
+      type: method.toUpperCase()
+      url: path
+      dataType: 'json'
+      data: data
+    
+    config = @before_request(config) if @before_request?
+    
+    $.ajax(config).done (data, status) ->
+      return callback?(new Error(data)) unless status is 'success'
+      callback?(null, data)
+  
+  get: (path, data, callback) -> @request('get', path, data, callback)
+  post: (path, data, callback) -> @request('post', path, data, callback)
+  put: (path, data, callback) -> @request('put', path, data, callback)
+  delete: (path, data, callback) -> @request('delete', path, data, callback)
+
 class AwesomeboxClient extends Backbone.Model
   root: ''
   
@@ -6,20 +36,38 @@ class AwesomeboxClient extends Backbone.Model
     @set(user: window.__bootstrap__.user) if window.__bootstrap__?.user?
 
     @set(online: @has('user'))
+    @raw_client = new Client()
+    @client = new Client(
+      (config) =>
+        config.url = 'http://api.awesomebox.es' + config.url + '?awesomebox-key=' + @get('user').api_key
+        config
+    )
   
   start: ->
     @clock = new Clock([10, 30])
-    @socket = new Socket()
-    @socket.on 'message', (data) =>
-      console.log data
-      
-      if data.user isnt undefined
-        @set(
-          user: data.user
-          online: data.user isnt null
-        )
     
-    @socket.connect('/socket')
+    @faye = new Faye.Client('/faye')
+    @rpc = new FayeRpcExtension()
+    @faye.addExtension(@rpc)
+    
+    encode = (v) -> encodeURIComponent(v).replace(/\./g, '%2E').replace(/:/g, '%3A').replace(/%/g, '$')
+    decode = (v) -> decodeURIComponent(v.replace(/\$/g, '%'))
+    
+    @faye.addExtension(
+      outgoing: (message, callback) ->
+        message.channel = '/' + _(message.channel.split('/')).compact().map(encode).join('/')
+        callback(message)
+    )
+    
+    @faye.subscribe '/change/user', (message) =>
+      @set(
+        user: message.changes.user
+        online: message.changes.user isnt null
+      )
+    
+    @faye.subscribe '/change/app/**', (message) =>
+      app = @apps.get(message.id)
+      app?.set(message.changes)
     
     @apps = new App.AppCollection()
     @apps.fetch(

@@ -1,0 +1,74 @@
+#drawer {
+  position: fixed;
+  top: 50px;
+  bottom: 0;
+  left: 0;
+  width: 220px;
+  background: #222;
+  
+  .nav li {
+    position: relative;
+    list-style: none;
+    padding: 7px 7px 7px 40px;
+    color: #f0f0f0;
+    border-top: 1px solid #333;
+    border-bottom: 1px solid #111;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    border-right: 4px solid #555;
+    
+    &.spacer {
+      height: 20px;
+    }
+    &.heading {
+      color: #aaa;
+      cursor: normal;
+    }
+    &.list-container {
+      height: auto;
+      padding: 0;
+      border-right: none;
+      background: #292929;
+      margin: 0;
+    }
+    
+    .glyphicon, [class^="icon-"] {
+      position: absolute;
+      top: 9px;
+      left: 18px;
+    }
+    
+    .icon-right {
+      position: absolute;
+      top: 9px;
+      right: 20px;
+      left: auto;
+      cursor: pointer;
+    }
+    .icon-right:hover {
+      color: #fff;
+    }
+  }
+  
+  .app-list {
+    margin: 0;
+    
+    li {
+      cursor: pointer;
+      &:hover {
+        background: #242424;
+      }
+      &.active, &.active:hover {
+        background: #ddd;
+        color: #333;
+        border-right: none;
+        border-left: 4px solid #fff;
+        padding-left: 36px;
+      }
+      &.active:hover {
+        cursor: default;
+      }
+    }
+  }
+}

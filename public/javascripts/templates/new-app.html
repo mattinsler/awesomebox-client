@@ -1,0 +1,30 @@
+<div class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Create App</h4>
+      </div>
+      <div class="modal-body">
+        <form class="form-horizontal" data-event="submit: submit">
+          <div class="control-group"> <!-- has-error -->
+            <label class="control-label">Directory</label>
+            <div class="controls">
+              <input name="directory" type="text" class="input-with-feedback">
+            </div>
+          </div>
+          
+          <div class="control-group">
+            <label class="control-label">Template</label>
+            <div class="controls">
+              <ul class="template-list"></ul>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <input type="button" class="btn btn-default" value="Cancel" data-dismiss="modal">
+        <input type="submit" class="btn btn-primary" value="Create App" data-event="click: submit">
+      </div>
+    </div>
+  </div>
+</div>

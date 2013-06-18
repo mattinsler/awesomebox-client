@@ -26,9 +26,18 @@
     </span>
   <% } %>
     
-    <button class="btn btn-small expand-contract pull-right">
-      <i class="glyphicon glyphicon-chevron-down"></i>
-    </button>
+    <div class="pull-right">
+      <span class="button-spacing">
+      <% if (model.get('instance').is_blessed) { %>
+        <i class="glyphicon glyphicon-star"></i>
+      <% } else { %>
+        <i class="glyphicon glyphicon-star-empty"></i>
+      <% } %>
+      </span>
+      <button class="btn btn-small expand-contract">
+        <i class="glyphicon glyphicon-chevron-down"></i>
+      </button>
+    </div>
   </div>
   
   <div class="row-content">

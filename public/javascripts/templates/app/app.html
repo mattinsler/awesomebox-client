@@ -1,18 +1,12 @@
 <div class="app-header clearfix">
   <div class="meta pull-left">
     <div class="clearfix">
-    <% if (model.get('is_remote')) { %>
-      <span class="pull-left button-spacing">
-        <i class="glyphicon glyphicon-plane"></i>
-      </span>
-    <% } else { %>
       <button class="btn pull-left" data-event="click: ship" title="Ship this app!">
         <i class="glyphicon glyphicon-plane"></i>
       </button>
-    <% } %>
       <div class="pull-left" style="margin-left: 10px;">
         <h3><%= model.get('name') %></h3>
-        <small data-bind="directory"></small>
+        <small><%= model.get('local_directory') %></small>
       </div>
     </div>
     
@@ -26,15 +20,22 @@
   </div>
   
   <div class="actions pull-right">
-    <button class="btn btn-small" data-bind="[class:hide] is_running -> value !== true" data-event="click: open_local_site">
+  <% if (model.get('local_running')) { %>
+    <button class="btn btn-small" data-event="click: open_local">
       <i class="icon-external-link"></i>
     </button>
+  <% } %>
     
     <div class="btn-group">
-      <button class="btn btn-small" data-event="click: start_stop">
-        <i class="icon-play" data-bind="[class:hide] is_running -> value === true"></i>
-        <i class="icon-stop" style="color:#d14;" data-bind="[class:hide] is_running -> value !== true"></i>
+    <% if (model.get('local_running')) { %>
+      <button class="btn btn-small" data-event="click: stop_local">
+        <i class="icon-stop"></i>
       </button>
+    <% } else { %>
+      <button class="btn btn-small" data-event="click: start_local">
+        <i class="icon-play"></i>
+      </button>
+    <% } %>
       <button class="btn btn-small" data-event="click: open_folder">
         <i class="icon-folder-open"></i>
       </button>
@@ -46,9 +47,67 @@
   <div class="tab-pane active" id="docs">
     <h4>Getting Started</h4>
     <div class="content">
-      Heloo world<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
-      Yo man<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
-      I know you
+      <h3 style="margin-top:0;">How to build the <%= model.get('name') %> app with awesomebox</h3>
+      <p>
+        Building an app with awesomebox is incredibly straightforward. Just drop your files in the
+        app directory and start the server!
+      </p>
+      
+      <h3>Quick Start</h3>
+      <p>
+        Now that you have created a new app, let's walk through a simple hello world.
+      </p>
+      
+      <h4><span class="button-spacing-small"><i class="icon-folder-open"></i></span> Open the code</h4>
+      <p>
+        First, let's open up our code directory by clicking the
+        <button class="btn btn-small" data-event="click: open_folder"><i class="icon-folder-open"></i></button>
+        button in the top right of this window.
+      </p>
+      
+      <h4><span class="button-spacing-small"><i class="glyphicon glyphicon-pencil"></i></span> Create the homepage</h4>
+      <p>
+        Now, create a file and name it <code>index.html</code>. Let's add some simple HTML to this file:
+      </p>
+      <pre class="prettyprint lang-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;title&gt;<%= model.get('name') %>&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  Hello World!
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+      
+      <h4><span class="button-spacing-small"><i class="icon-play"></i></span> Run the local server</h4>
+      <p>
+        Now run the app by clicking the
+        <button class="btn btn-small" data-event="click: start_local"><i class="icon-play"></i></button>
+        button, so that we can see what this looks like.
+      </p>
+      
+      <h4><span class="button-spacing-small"><i class="glyphicon glyphicon-plane"></i></span> Ship the app!</h4>
+      <p>
+        Click the <button class="btn btn-small" data-event="click: ship"><i class="glyphicon glyphicon-plane"></i></button>
+        button to ship the app up to the awesomebox.es server!
+      </p>
+      
+      <!-- <p>
+        To demonstrate the live update functionality in awesomebox, go ahead and change something in your
+        <code>index.html</code> file and save it without closing the window with our app in it.
+        You'll notice that the webpage has updated! This is because the local server is watching for changes
+        in your app's files and will automagically update the page for you while you're working on it locally.
+      </p>
+      
+      <h3>That's all you need to know!</h3>
+      <p>
+        Awesomebox is meant to be so simple that this is all you need to do to create and publish a website!
+      </p>
+      <p>
+        Awesomebox can actually do a whole lot more for you, like interpret HTML template languages, CSS variants
+        like SASS and Stylus, and languages that compile to Javascript, like Coffeescript. Furthermore, awesomebox
+        can handle layouts, partials, and data files. Read on to see how to use all of these features!
+      </p> -->
     </div>
   </div>
   

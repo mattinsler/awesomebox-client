@@ -29,7 +29,8 @@ class ApplicationController extends Controller
       config.api_key = user.api_key
       awesomebox.client_config = config
       user = add_gravatar_hash(user)
-      Caboose.app.socket.send(user: user)
+      Caboose.app.faye.publish('/change/user', type: 'user', changes: {user: user})
+      # Caboose.app.socket.send(user: user)
       
       @respond_with(user)
   
@@ -38,5 +39,6 @@ class ApplicationController extends Controller
     delete config.api_key
     awesomebox.client_config = config
     
-    Caboose.app.socket.send(user: null)
+    Caboose.app.faye.publish('/change/user', type: 'user', changes: {user: null})
+    # Caboose.app.socket.send(user: null)
     @respond_with('ok')

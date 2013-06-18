@@ -1,3 +1,8 @@
+@import "header.less";
+@import "drawer.less";
+@import "content.less";
+
+
 .button-spacing {
   display: inline-block;
   padding: 8px 12px;
@@ -11,22 +16,19 @@
   border: 1px solid transparent;
 }
 
+.button-spacing-small {
+  padding: 5px 10px;
+  font-size: 12px;
+  line-height: 1.5;
+  border-radius: 3px;
+}
+
 .btn .icon-play {color:#468847;}
 .btn:hover .icon-play {color:#dff0d8;}
 .btn .icon-stop {color:#b94a48;}
 .btn:hover .icon-stop {color:#eed3d7;}
 
-header.navbar {
-  background-color:#428bca;
-  
-  .navbar-brand {color:#fff;}
-  .gravatar {margin-left: 10px;border-radius: 50px;}
-  .navbar-nav > li > a {
-    color:#ddd;
-    &:hover {color:#fff;}
-    &.gravatar-container {padding-top: 9px; padding-bottom: 9px;}
-  }
-}
+
 
 ul.expandable-row-list {
   list-style: none;
@@ -47,6 +49,10 @@ ul.expandable-row-list {
   }
 }
 
+.glyphicon-star, .glyphicon-star-empty {
+  color: #c09853;
+}
+
 ul.version-list {
   .version {
     padding-left: 30px;
@@ -56,148 +62,50 @@ ul.version-list {
   }
 }
 
-#drawer {
-  position: fixed;
-  top: 50px;
-  bottom: 0;
-  left: 0;
-  width: 220px;
-  background: #222;
-  
-  .nav li {
-    position: relative;
-    list-style: none;
-    padding: 7px 7px 7px 40px;
-    color: #f0f0f0;
-    border-top: 1px solid #333;
-    border-bottom: 1px solid #111;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    border-right: 4px solid #555;
-    
-    &.spacer {
-      height: 20px;
-    }
-    &.heading {
-      color: #aaa;
-      cursor: normal;
-    }
-    &.list-container {
-      height: auto;
-      padding: 0;
-      border-right: none;
-      background: #292929;
-      margin: 0;
-    }
-    
-    .glyphicon, [class^="icon-"] {
-      position: absolute;
-      top: 9px;
-      left: 18px;
-    }
-    
-    .icon-right {
-      position: absolute;
-      top: 9px;
-      right: 20px;
-      left: auto;
-    }
-  }
-  
-  .app-list {
-    margin: 0;
-    
-    li {
-      cursor: pointer;
-      &:hover {
-        background: #242424;
-      }
-      &.active, &.active:hover {
-        background: #ddd;
-        color: #333;
-        border-right: none;
-        border-left: 4px solid #fff;
-        padding-left: 36px;
-      }
-      &.active:hover {
-        cursor: default;
-      }
-    }
-  }
-}
 
-#content {
-  position: fixed;
-  top: 50px;
-  right: 0;
-  bottom: 0;
-  left: 220px;
+ul.template-list {
+  margin: 0;
+  height: 250px;
   overflow-y: auto;
+  border: 1px solid #ddd;
   
-  .app-header {
-    position: relative;
-    background: #f5f5f5;
-    padding: 12px 14px 18px 14px;
+  li {
+    line-height: 0;
+    padding: 15px 15px 14px 15px;
     border-bottom: 1px solid #ddd;
-    box-shadow: inset 1px 1px 3px #aaa;
+    cursor: pointer;
     
-    .meta {
-      h3 {
-        color: #555;
-        font-size: 14px;
-        line-height: 20px;
-        font-weight: bold;
-        margin: 0;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-      }
-      small {
-        display: block;
-        font-size: 11px;
-        line-height: 15px;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-      }
-    }
-  }
-  
-  .nav.nav-pills {
-    li > a {
-      padding: 0;
-      margin-right: 10px;
-      color: #555;
-      font-size: 13px;
-      font-weight: 400;
-      text-decoration: underline;
-      cursor: pointer;
-      
-      &:hover, &:focus {
-        text-decoration: none;
-        background-color: inherit;
-      }
+    &:hover {
+      background: #f5f5f5;
     }
     
-    li.active > a {
-      background: inherit;
-      font-weight: bold;
-      text-decoration: none;
+    &.active {
+      background: lighten(#428bca, 40%);
+      border-left: 5px solid #428bca;
+      padding-left: 10px;
+      cursor: default;
     }
-  }
-  
-  .tab-content {
+    
     h4 {
-      color: #555;
       margin: 0;
-      padding: 12px 14px 11px 14px;
-      border-bottom: 1px solid #ddd;
-      font-weight: normal;
+      color: #555;
       font-size: 14px;
+      font-weight: bold;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
     }
-    .content {
-      padding: 12px 14px 11px 14px;
+    
+    p {
+      font-size: 12px;
+      color: #555;
+      font-weight: 300;
+    }
+    
+    img {
+      max-height: 100px;
+      max-width: 100px;
+      border: 1px solid #eee;
     }
   }
 }
