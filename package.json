@@ -12,7 +12,7 @@
     "walkabout": "~0.1.4",
     "open": "0.0.3",
     "faye": "~0.8.9",
-    "awesomebox": "https://github.com/mattinsler/awesomebox/tarball/master",
+    "awesomebox": "https://github.com/mattinsler/awesomebox/tarball/develop",
     "awesomebox.node": "https://github.com/mattinsler/awesomebox.node/tarball/master"
   },
   "scripts": {
