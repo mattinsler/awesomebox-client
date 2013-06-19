@@ -12,8 +12,8 @@
     "walkabout": "~0.1.4",
     "open": "0.0.3",
     "faye": "~0.8.9",
-    "awesomebox": "latest",
-    "awesomebox.node": "latest"
+    "awesomebox": "https://github.com/mattinsler/awesomebox/tarball/master",
+    "awesomebox.node": "https://github.com/mattinsler/awesomebox.node/tarball/master"
   },
   "scripts": {
     "start": "./node_modules/.bin/caboose server"
