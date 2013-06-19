@@ -1,5 +1,6 @@
 _ = require 'underscore'
 faye = require 'faye'
+walkabout = require 'walkabout'
 FayeRpcExtension = Caboose.path.lib.join('faye_rpc_extension').require()
 
 bayeux = Caboose.app.bayeux = new faye.NodeAdapter(mount: '/faye', timeout: 45)
@@ -12,8 +13,21 @@ rpc.on 'fs:root', (callback) ->
   callback(null, process.env.HOME)
 
 rpc.on 'apps:new', (opts, callback) ->
-  console.log opts
-  callback(null, false)
+  return callback(new Error('Must specify a template')) unless opts.template?
+  return callback(new Error('Must specify a directory')) unless opts.directory? and opts.directory.trim() isnt ''
+  
+  template_dir = walkabout(Caboose.root.join('app-templates', opts.template).path)
+  return callback(new Error('There is not template with ID ' + opts.template)) unless template_dir.exists_sync()
+  
+  target_dir = walkabout(opts.directory)
+  return callback(new Error('Directory must be not exist')) if target_dir.exists_sync()
+  
+  Caboose.path.lib.join('app').require().create_from_template {
+    template: template_dir
+    target: target_dir
+  }, (err, app) ->
+    return callback(err) if err?
+    callback(null, Caboose.app.app_repo.add(app).to_json())
 
 rpc.on 'apps:*', (method, opts, callback) ->
   return callback('Must specify an app id') unless opts.id?
@@ -23,6 +37,16 @@ rpc.on 'apps:*', (method, opts, callback) ->
   app[method]()
   callback()
 
+rpc.on 'app-templates:list', (callback) ->
+  Caboose.root.join('app-templates').readdir (err, files) ->
+    return callback(err) if err?
+    templates = files.filter (f) ->
+      f.is_directory_sync() and f.join('template.json').exists_sync()
+    .map (f) ->
+      a = f.join('template.json').require()
+      a.id = f.basename
+      a
+    callback(null, templates)
 
 Caboose.app.after 'boot', ->
   app_repo = Caboose.app.app_repo

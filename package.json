@@ -11,7 +11,9 @@
     "underscore": "~1.4.4",
     "walkabout": "~0.1.4",
     "open": "0.0.3",
-    "faye": "~0.8.9"
+    "faye": "~0.8.9",
+    "awesomebox": "latest",
+    "awesomebox.node": "latest"
   },
   "scripts": {
     "start": "./node_modules/.bin/caboose server"

@@ -15,6 +15,7 @@ class App.NewAppDialog extends App.Dialog
   
   initialize: ->
     Spellbinder.initialize(@, replace: true)
+    @templates = new Backbone.Collection()
   
   submit: (evt) ->
     evt?.preventDefault?()
@@ -22,30 +23,26 @@ class App.NewAppDialog extends App.Dialog
     App.rpc.call 'apps:new', {
       template: @get('template').id
       directory: @$('[name="directory"]').val()
-    }, () ->
-      console.log arguments
+    }, (err, app) =>
+      return console.log(err) if err?
+      App.apps.add(app)
+      Backbone.history.navigate(app.id, true)
+      @hide()
     
     false
   
   render: ->
     App.rpc.call 'fs:root', (err, data) =>
       @$('[name="directory"]').val(data) if data?
+    App.rpc.call 'app-templates:list', (err, data) =>
+      @templates.add(data) if data?
     
-    @templates = new Backbone.Collection([
-      new Backbone.Model(
-        id: 'bootstrap-example'
-        name: 'Bootstrap Example'
-        description: 'Simple Hello World app using Twitter Bootstrap'
-        image: 'http://twitter.github.io/bootstrap/assets/img/examples/bootstrap-example-marketing.png'
-      )
-      new Backbone.Model(
-        id: 'blank'
-        name: 'Blank'
-        description: 'Blank app'
-        image: ''
-        selected: true
-      )
-    ])
+    @$('[name="directory"]').typeahead(
+      name: 'directory'
+      remote: 'fs?path=%QUERY'
+      limit: 10
+    )
+    
     new CollectionView(
       el: @$('.template-list')
       item_view: (opts) =>

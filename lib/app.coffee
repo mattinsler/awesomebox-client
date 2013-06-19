@@ -35,6 +35,25 @@ class App extends Properties
     config.local_directory = path.absolute_path
     new @(config)
   
+  @create_from_template: (opts, callback) ->
+    opts.target.mkdirp()
+    opts.target.join('.awesomebox.json').write_file_sync(JSON.stringify(
+      name: opts.target.filename
+    ))
+    
+    template_path = opts.template.absolute_path
+    opts.template.ls_sync(recursive: true).forEach (file) ->
+      fragment = file.absolute_path.slice(template_path.length + 1)
+      return if fragment is 'template.json'
+      
+      to_file = opts.target.join(fragment)
+      if file.is_directory_sync()
+        to_file.mkdir_sync()
+      else
+        file.copy_sync(to_file)
+    
+    callback(null, @from_dir(opts.target.absolute_path))
+  
   open_local: ->
     return unless @get('local_running') is true
     open 'http://localhost:' + @get('local_port')

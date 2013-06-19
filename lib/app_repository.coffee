@@ -1,35 +1,12 @@
-_ = require 'underscore'
+{EventEmitter} = require 'events'
 fs = require 'fs'
+
+_ = require 'underscore'
 async = require 'async'
 walkabout = require 'walkabout'
+
 App = require './app'
-Properties = require './properties'
-{EventEmitter} = require 'events'
-
-class AwesomeboxConfig extends Properties
-  constructor: (@config_file) ->
-    super()
-    @config_file = walkabout(@config_file)
-    @_read_config()
-    
-    @on 'change', (changes, opts) =>
-      @config_file.write_file_sync(JSON.stringify(@to_json())) if opts.write isnt false
-  
-  _read_config: ->
-    try
-      @set(JSON.parse(@config_file.read_file_sync()), write: false)
-    catch err
-      console.log 'AWESOMEBOX CONFIG LOAD ERROR'
-      console.log err.stack
-    
-    # @watcher = fs.watch(@config_file.absolute_path, persistent: false)
-    # @watcher.on 'error', (err) ->
-    #   console.log 'WATCHER ERROR'
-    #   console.log err.stack
-    # @watcher.on 'change', ->
-    #   console.log 'WATCHER CHANGE'
-    #   console.log arguments
-
+AwesomeboxConfig = require './awesomebox_config'
 
 class AppRepository extends EventEmitter
   constructor: ->
@@ -52,5 +29,19 @@ class AppRepository extends EventEmitter
   
   get: (app_id) ->
     @apps_by_id[app_id]
+  
+  add: (app) ->
+    apps = @config.get('client_apps') ? []
+    apps.push(app.get('local_directory'))
+    @config.set(client_apps: apps)
+    @config._write_config()
+    
+    @_bind_to_app(app)
+    @apps.push(app)
+    @apps_by_id[app.id] = app
+    app
+  
+  remove: (app) ->
+    
 
 module.exports = AppRepository
