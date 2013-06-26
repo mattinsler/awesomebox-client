@@ -25,6 +25,10 @@
       Started <span data-bind="@App.clock:every_10_sec, started_at -> moment(started_at).fromNow()"></span>
     </span>
   <% } %>
+  
+    <span class="created-at pull-left">
+      <%= model.get('instance').comment || '' %>
+    </span>
     
     <div class="pull-right">
       <span class="button-spacing">
@@ -41,7 +45,6 @@
   </div>
   
   <div class="row-content">
-    Change List<br/>
-    Thumbnail of index page
+    <p><%= model.get('instance').comment || 'No Comment' %></p>
   </div>
 </li>

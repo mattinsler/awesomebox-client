@@ -46,7 +46,7 @@ class FayeRpcExtension
     message.data.args ?= []
     message.data.args.push (err, data) =>
       return unless message.data.callback is true
-      return @client.publish('/rpc', id: id, error: err.message) if err?
+      return @client.publish('/rpc', id: id, error: err.body or err.message) if err?
       @client.publish('/rpc', id: id, response: data)
     
     message.data.args.unshift(message.data.method.slice(method_name.length - 1)) unless message.data.method is method_name

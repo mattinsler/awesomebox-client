@@ -1,6 +1,7 @@
 crypto = require 'crypto'
 {spawn} = require 'child_process'
 
+_ = require 'underscore'
 open = require 'open'
 async = require 'async'
 walkabout = require 'walkabout'
@@ -105,7 +106,7 @@ class App extends Properties
     callback?()
   
   ship: (opts, callback) ->
-    return if @get('is_shipping')
+    return callback() if @get('is_shipping')
     @set(is_shipping: true)
     
     if opts.log_channel?
@@ -142,18 +143,17 @@ class App extends Properties
         size += Buffer.byteLength(data.toString())
         logger(status: 'Uploaded ' + size + ' bytes...')
       
-      @app_client.update stream, (err, data) ->
+      @app_client.update stream, {comment: opts.comment}, (err, data) ->
         deployment_file.unlink_sync()
-        console.log arguments
         cb(err, data)
     
     steps = []
     steps.push(create_app) unless @get('is_remote')
     steps.push(create_package, push)
     
-    async.series steps, (err) =>
+    async.series steps, (err, results) =>
       @set(is_shipping: false)
       return callback(err) if err?
-      callback()
+      callback(null, _(results).last())
 
 module.exports = App

@@ -12,18 +12,19 @@ class App.ShippingDialog extends App.Dialog
     false
   
   ship: (opts) ->
-    @$('textarea').prop('disabled', true)
+    @$('textarea, [type="button"], [type="submit"]').prop('disabled', true)
     @$('.status').slideDown()
     
     log_channel = '/apps/ship/' + parseInt(Math.random() * 10000000)
     App.faye.subscribe log_channel, (data) =>
-      console.log data
       @$('.status').html(data.status)
     
-    App.rpc.call 'apps:ship', {id: @model.id, log_channel: log_channel, comment: opts.comment}, (err, version) ->
+    App.rpc.call 'apps:ship', {id: @model.id, log_channel: log_channel, comment: opts.comment}, (err, version) =>
       console.log arguments
       
-      return @$('.status').html(err.toString()).toggleClass('error', true) if err?
+      if err?
+        @$('textarea, [type="button"], [type="submit"]').prop('disabled', false)
+        return @$('.status').html(err.toString()).toggleClass('error', true)
       
       App.faye.unsubscribe(log_channel)
       @$('.status').html('Yay! Your app has shipped!')
