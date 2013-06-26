@@ -1,0 +1,30 @@
+#!/bin/sh
+
+CLIENT_DIR=$(cd $(dirname $0)/../; pwd)
+PORT=${PORT-7000}
+
+pushd $CLIENT_DIR >/dev/null 2>&1
+
+if [ -e pid ]; then
+  pid=$(cat pid)
+  ps -p $pid >/dev/null 2>&1
+  [ $? -eq 0 ] && already_running=1
+  [ -z "$already_running" ] && rm pid
+fi
+
+if [ -z "$already_running" ]; then
+  echo '' > client.log
+  PORT=$PORT node_modules/caboose/bin/caboose server > client.log 2>&1 &
+  pid=$!
+  echo $pid > pid
+  
+  while [ 0 -ne $(grep "\[CABOOSE\] Listening on port" client.log >/dev/null 2>&1; echo $?) ]; do
+    sleep 0.5
+  done
+fi
+
+open http://0.0.0.0:$PORT
+
+popd >/dev/null 2>&1
+
+exit 0

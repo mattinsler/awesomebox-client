@@ -1,0 +1,22 @@
+#!/bin/sh
+
+CLIENT_DIR=$(cd $(dirname $0)/../; pwd)
+
+wait_for_pid() {
+  while [ 0 -eq $(ps -p $1 >/dev/null 2>&1; echo $?) ]; do
+    sleep 0.5
+  done
+}
+
+pushd $CLIENT_DIR >/dev/null 2>&1
+
+if [ -e pid ]; then
+  pid=$(cat pid)
+  kill $pid >/dev/null 2>&1
+  wait_for_pid $pid >/dev/null 2>&1
+  rm pid >/dev/null 2>&1
+fi
+
+popd >/dev/null 2>&1
+
+exit 0

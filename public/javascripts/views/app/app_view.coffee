@@ -5,12 +5,6 @@ class App.AppView extends Backbone.View
   initialize: ->
     Spellbinder.initialize(@)
     @model.on('change', @render, @)
-    @model.on 'change:is_shipping', =>
-      @dialog ?= new App.ShippingDialog(model: @model).render()
-      if @model.get('is_shipping')
-        @dialog.show()
-      else
-        @dialog.hide()
   
   render: ->
     setTimeout(prettyPrint, 1)
@@ -36,4 +30,4 @@ class App.AppView extends Backbone.View
     App.rpc.call('apps:open_folder', id: @model.id)
     
   ship: ->
-    # App.faye.publish("/command/app/#{@model.id}", type: 'app', id: @model.id, method: 'ship')
+    new App.ShippingDialog(model: @model).render().show()

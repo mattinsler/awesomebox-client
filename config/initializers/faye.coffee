@@ -1,6 +1,8 @@
 _ = require 'underscore'
 faye = require 'faye'
 walkabout = require 'walkabout'
+AwesomeboxClient = require 'awesomebox.node'
+User = Caboose.path.lib.join('user').require()
 FayeRpcExtension = Caboose.path.lib.join('faye_rpc_extension').require()
 
 bayeux = Caboose.app.bayeux = new faye.NodeAdapter(mount: '/faye', timeout: 45)
@@ -11,6 +13,29 @@ decode = (v) -> decodeURIComponent(v.replace(/\$/g, '%'))
 rpc = Caboose.app.rpc = new FayeRpcExtension()
 rpc.on 'fs:root', (callback) ->
   callback(null, process.env.HOME)
+
+rpc.on 'awesomebox:login', (opts, callback) ->
+  client = new AwesomeboxClient(opts)
+  client.user.get (err, user) ->
+    return callback?(err) if err?
+    
+    user = new User(user)
+    Caboose.app.awesomebox_config.set(api_key: user.api_key)
+    
+    bayeux.getClient().publish('/change/user', type: 'user', changes: {user: user})
+    callback?(null, user)
+
+rpc.on 'awesomebox:logout', (callback) ->
+  Caboose.app.awesomebox_config.unset('api_key')
+  
+  bayeux.getClient().publish('/change/user', type: 'user', changes: {user: null})
+  callback?()
+
+rpc.on 'awesomebox:update-available', (callback) ->
+  callback(null, Caboose.app.updater.is_update_available())
+
+rpc.on 'awesomebox:update', (opts, callback) ->
+  Caboose.app.updater.update(opts, callback)
 
 rpc.on 'apps:new', (opts, callback) ->
   return callback(new Error('Must specify a template')) unless opts.template?
@@ -34,8 +59,7 @@ rpc.on 'apps:*', (method, opts, callback) ->
   app = Caboose.app.app_repo.get(opts.id)
   return callback('No app with ID ' + opts.id) unless app?
   return callback('Np app method ' + method) unless app[method]?
-  app[method]()
-  callback()
+  app[method](opts, callback)
 
 rpc.on 'app-templates:list', (callback) ->
   Caboose.root.join('app-templates').readdir (err, files) ->
@@ -55,6 +79,9 @@ Caboose.app.after 'boot', ->
   
   client = bayeux.getClient()
   client.addExtension(rpc)
+  
+  Caboose.app.updater.on 'update_available', ->
+    client.publish('/awesomebox/update-available')
   
   client.addExtension(
     outgoing: (message, callback) ->

@@ -59,6 +59,18 @@ class AwesomeboxClient extends Backbone.Model
         callback(message)
     )
     
+    show_update = ->
+      $el = $('<div class="alert" style="position:fixed;bottom:10px;right:10px;cursor:pointer;"><strong>Update Available!</strong> Click here to update now</div>').hide()
+      $el.click -> new App.UpdateDialog().render().show()
+      $('body').append($el)
+      $el.slideDown()
+    
+    @rpc.call 'awesomebox:update-available', (err, available) ->
+      show_update() if available
+    
+    @faye.subscribe '/awesomebox/update-available', ->
+      show_update()
+    
     @faye.subscribe '/change/user', (message) =>
       @set(
         user: message.changes.user
@@ -81,13 +93,10 @@ class AwesomeboxClient extends Backbone.Model
       callback = config
       config = null
     
-    $.post('/login', config).complete (res) =>
-      return callback(new Error(res.respondJSON)) if res.status isnt 200
-      callback?(null, res.responseJSON)
+    @rpc.call('awesomebox:login', config, callback)
   
   logout: (callback) =>
-    $.getJSON '/logout', ->
-      callback?()
+    @rpc.call('awesomebox:logout', callback)
 
   start_backbone: (root) ->
     Backbone.history.start(root: root)

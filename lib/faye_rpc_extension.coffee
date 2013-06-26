@@ -58,7 +58,6 @@ class FayeRpcExtension
   
   incoming: (message, callback) ->
     return callback(message) unless message.channel is '/rpc' and message.data?
-    
     return @handle_response(message, callback) if message.data.id? and (message.data.response? or message.data.error?)
     return @handle_method(message, callback) if message.data.method?
     callback(message)

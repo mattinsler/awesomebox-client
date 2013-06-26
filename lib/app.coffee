@@ -2,6 +2,7 @@ crypto = require 'crypto'
 {spawn} = require 'child_process'
 
 open = require 'open'
+async = require 'async'
 walkabout = require 'walkabout'
 Properties = require './properties'
 AwesomeboxClient = require 'awesomebox.node'
@@ -24,6 +25,14 @@ class App extends Properties
       is_remote: @has('user')
       local_running: false
     )
+    
+    @__defineGetter__ 'client', ->
+      api_key = Caboose.app.awesomebox_config.get('api_key')
+      return null unless api_key?
+      new AwesomeboxClient(api_key: api_key)
+    
+    @__defineGetter__ 'app_client', ->
+      @client?.app(@get('name'))
   
   @from_dir: (path) ->
     path = walkabout(path)
@@ -54,14 +63,16 @@ class App extends Properties
     
     callback(null, @from_dir(opts.target.absolute_path))
   
-  open_local: ->
-    return unless @get('local_running') is true
+  open_local: (opts, callback) ->
+    return callback?() unless @get('local_running') is true
     open 'http://localhost:' + @get('local_port')
+    callback?()
   
-  open_folder: ->
+  open_folder: (opts, callback) ->
     open @get('local_directory')
+    callback?()
   
-  start_local: (callback) ->
+  start_local: (opts, callback) ->
     on_start = (err, port) =>
       @set(
         local_starting: false
@@ -89,23 +100,60 @@ class App extends Properties
       delete @proc
     @proc
   
-  stop_local: ->
+  stop_local: (opts, callback) ->
     @proc?.kill()
+    callback?()
   
-  ship: ->
+  ship: (opts, callback) ->
     return if @get('is_shipping')
     @set(is_shipping: true)
     
-    push = (err, filename) =>
-      return @set(is_shipping: false) if err?
-      client = new AwesomeboxClient(api_key: Caboose.app.app_repo.config.get('api_key'))
-      client.app(@get('name')).update filename, (err, data) ->
-        walkabout(filename).unlink_sync()
-        console.log arguments
-        @set(is_shipping: false)
+    if opts.log_channel?
+      logger = Caboose.app.bayeux.getClient().publish.bind(Caboose.app.bayeux.getClient(), opts.log_channel)
+    else
+      logger = ->
     
-    packager = require 'awesomebox/lib/packager'
     deployment_file = walkabout().join('deploy-' + @get('name') + '-' + crypto.randomBytes(4).toString('hex') + '.tgz')
-    packager.pack(@get('local_directory'), deployment_file.absolute_path, push)
+    
+    create_app = (cb) =>
+      logger(status: 'Creating app ' + @get('name') + '...')
+      @client.apps.create @get('name'), (err, data) =>
+        return cb(err) if err?
+        @set(data) if data?
+        
+        config_file = walkabout(@get('local_directory')).join('.awesomebox.json')
+        config = config_file.require()
+        config.user ?= @get('user')
+        config_file.write_file_sync(JSON.stringify(config, null, 2))
+        
+        cb()
+    
+    create_package = (cb) =>
+      logger(status: 'Packaging...')
+      packager = require 'awesomebox/lib/packager'
+      packager.pack(@get('local_directory'), deployment_file.absolute_path, cb)
+    
+    push = (cb) =>
+      logger(status: 'Uploading package...')
+      
+      size = 0
+      stream = deployment_file.create_read_stream()
+      stream.on 'data', (data) ->
+        size += Buffer.byteLength(data.toString())
+        logger(status: 'Uploaded ' + size + ' bytes...')
+      
+      @app_client.update stream, (err, data) ->
+        deployment_file.unlink_sync()
+        console.log arguments
+        cb(err, data)
+    
+    steps = []
+    steps.push(create_app) unless @get('is_remote')
+    steps.push(create_package, push)
+    
+    async.series steps, (err) =>
+      @set(is_shipping: false)
+      return callback(err) if err?
+      callback()
 
 module.exports = App

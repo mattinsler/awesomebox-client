@@ -1,12 +1,25 @@
 class VersionView extends Backbone.View
   template: @template('app/version')
   initialize: -> Spellbinder.initialize(@, replace: true)
+  
+  disable: ->
+    @$('.btn:first').prop('disabled', true)
+  
+  enable: ->
+    @$('.btn:first').prop('disabled', false)
+  
   start: ->
-    App.client.post "/apps/#{@model.get('instance').app}/versions/#{@model.get('instance').version}/start", =>
+    @disable()
+    App.client.post "/apps/#{@model.get('instance').app}/versions/#{@model.get('instance').version}/start", (err, data) =>
       console.log arguments
+      @model.set(data) if data?
+      @enable()
   stop: ->
-    App.client.post "/apps/#{@model.get('instance').app}/versions/#{@model.get('instance').version}/stop", =>
+    @disable()
+    App.client.post "/apps/#{@model.get('instance').app}/versions/#{@model.get('instance').version}/stop", (err, data) =>
       console.log arguments
+      @model.set(data) if data?
+      @enable()
   open_remote: ->
     App.raw_client.post('/commands/open', url: 'http://' + _(@model.get('domains')).last())
 
@@ -16,6 +29,12 @@ class App.AppVersionsView extends Backbone.View
     Spellbinder.initialize(@)
     @model.versions ?= new App.VersionCollection([], app: @model)
     @model.versions.fetch()
+    
+    @model.versions.on('change', @refresh_collections, @)
+  
+  refresh_collections: ->
+    @running_versions_view.render()
+    @not_running_versions_view.render()
   
   render: ->
     @running_versions_view = new CollectionView(
@@ -31,5 +50,4 @@ class App.AppVersionsView extends Backbone.View
       filter: (version) -> !version.get('running')
     )
     
-    @running_versions_view.render()
-    @not_running_versions_view.render()
+    @refresh_collections()

@@ -1,11 +1,25 @@
 <div class="modal fade">
   <div class="modal-dialog">
     <div class="modal-content">
-      <div class="modal-body">
-        <p style="text-align:center;">
-          Shipping a new version of <strong><%= model.get('name') %></strong>
-        </p>
-      </div>
+      <form style="margin:0;" data-event="submit: on_submit">
+        <div class="modal-header">
+          <h4 class="modal-title">Ship <strong><%= model.get('name') %></strong>!</h4>
+        </div>
+        <div class="modal-body">
+          <fieldset style="margin:0 auto;width:500px;">
+            <label>Add a comment</label>
+            <textarea name="comment" autofocus></textarea>
+          </fieldset>
+          
+          <p style="text-align:center;margin-top:20px;display:none;" class="status">
+            Shipping a new version of <strong><%= model.get('name') %></strong>
+          </p>
+        </div>
+        <div class="modal-footer">
+          <input type="button" class="btn btn-default" value="Cancel" data-event="click: hide">
+          <input type="submit" class="btn btn-primary" value="Ship!">
+        </div>
+      </form>
     </div>
   </div>
 </div>

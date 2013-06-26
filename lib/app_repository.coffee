@@ -8,9 +8,11 @@ walkabout = require 'walkabout'
 App = require './app'
 AwesomeboxConfig = require './awesomebox_config'
 
+Caboose.app.awesomebox_config = new AwesomeboxConfig(process.env.HOME + '/.awesomebox')
+
 class AppRepository extends EventEmitter
   constructor: ->
-    @config = new AwesomeboxConfig(process.env.HOME + '/.awesomebox')
+    @config = Caboose.app.awesomebox_config
     
     @apps = []
     @apps_by_id = {}
